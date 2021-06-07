@@ -8,7 +8,7 @@
         protected $table = 'tbluser';
         // column sa table
         protected $fillable = [
-            'username', 'password','gender'
+            'username', 'password','gender', 'jobid',
     ];
 
     protected $primaryKey = 'userid';

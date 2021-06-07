@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\UserJob;
 use App\Models\User;
 use Illuminate\Http\Response;
 use App\Traits\ApiResponser;
@@ -31,8 +32,10 @@ class UserController extends Controller
     public function index()
     {
         $users = User::all();
+        // $usersjob = UserJob::all();
 
         return $this->successResponse($users);
+        // return $this->successResponse($usersjob);
     }
 
 
@@ -43,12 +46,17 @@ class UserController extends Controller
             'username' => 'required|max:20',
             'password' => 'required|max:20',
             'gender' => 'required|in:Male,Female',
+            'jobid' => 'required|numeric|min:1|not_in:0',
 
         ];
 
-
         $this->validate($request, $rules);
+
+        // validate if Jobid is found in the table tbluserjob
+        $userjob = UserJob::findOrFail($request->jobid);
+
         $users = User::create($request->all());
+
         return $this->successResponse($users, Response::HTTP_CREATED);
 
     }
@@ -56,6 +64,10 @@ class UserController extends Controller
 
     public function show($id)
     {
+
+        // $user = User::findOrfail($id);
+        // return $this->successResponse($user);
+
         $users = User::where('userid', $id)->first();
         if($users){
             return $this->successResponse($users);
@@ -76,15 +88,27 @@ class UserController extends Controller
             'username' => 'max:20',
             'password' => 'max:20',
             // 'gender' => 'required|in:Male,Female',
+            'jobid' => 'required|numeric|min:1|not_in:0',
 
         ];
 
         $this->validate($request, $rules);
 
+        // validate if Jobid is found in the table tbluserjob
+        $userjob = UserJob::findOrFail($request->jobid);
+ 
         $users = User::findOrFail($id);
 
         $users->fill($request->all());
         
+        // if no changes happen
+        if ($user->isClean()) {
+            return $this->errorResponse('At least one value must change',Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        $user->save();
+            return $this->successResponse($user);
+
         $users->save();
         if($users){
             return $this->successResponse($users);
