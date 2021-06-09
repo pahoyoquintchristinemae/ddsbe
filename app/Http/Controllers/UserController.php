@@ -32,10 +32,8 @@ class UserController extends Controller
     public function index()
     {
         $users = User::all();
-        // $usersjob = UserJob::all();
 
         return $this->successResponse($users);
-        // return $this->successResponse($usersjob);
     }
 
 
@@ -65,18 +63,18 @@ class UserController extends Controller
     public function show($id)
     {
 
-        // $user = User::findOrfail($id);
-        // return $this->successResponse($user);
+        $user = User::findOrfail($id);
+        return $this->successResponse($user);
 
-        $users = User::where('userid', $id)->first();
-        if($users){
-            return $this->successResponse($users);
-        }
+        // $users = User::where('userid', $id)->first();
+        // if($users){
+        //     return $this->successResponse($users);
+        // }
     
-        {
-            return $this->errorResponse('User ID Does Not Exist', Response::HTTP_NOT_FOUND);
+        // {
+        //     return $this->errorResponse('User ID Does Not Exist', Response::HTTP_NOT_FOUND);
 
-        }
+        // }
 
     }
     
@@ -102,12 +100,12 @@ class UserController extends Controller
         $users->fill($request->all());
         
         // if no changes happen
-        if ($user->isClean()) {
+        if ($users->isClean()) {
             return $this->errorResponse('At least one value must change',Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        $user->save();
-            return $this->successResponse($user);
+        $users->save();
+            return $this->successResponse($users);
 
         $users->save();
         if($users){
